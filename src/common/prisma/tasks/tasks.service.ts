@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Task, Prisma } from '@prisma/client';
+import { FindTaskParamsDTO } from './dto/find-task-params.dto';
 
 @Injectable()
 export class TasksService {
@@ -14,17 +15,13 @@ export class TasksService {
     });
   }
 
-  async find(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.TaskWhereUniqueInput;
-    where?: Prisma.TaskWhereInput;
-    orderBy?: Prisma.TaskOrderByWithRelationInput;
-  }): Promise<Task[]> {
+  async find(params: FindTaskParamsDTO): Promise<Task[]> {
     const { skip, take, cursor, where, orderBy } = params;
+    const _take = take ? Number(take) : undefined;
+    const _skip = skip ? Number(skip) : undefined;
     return this.prisma.task.findMany({
-      skip,
-      take,
+      skip: _skip,
+      take: _take,
       cursor,
       where,
       orderBy,
